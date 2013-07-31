@@ -1,0 +1,31 @@
+#!/bin/sh
+#
+# Plugin to monitor ioDrive internal voltage  
+
+#%# family=auto
+#%# capabilities=autoconf
+
+if [ "$1" = "autoconf" ]; then
+        echo yes
+        exit 0
+fi
+
+if [ "$1" = "config" ] ; then
+        echo "graph_args -r --lower-limit 0 ";
+        echo "graph_title ioDrive internal voltage";
+        echo "graph_category iodrive";
+        echo "graph_info Internal vortage";
+        echo 'graph_vlabel V'
+
+        echo "cur.label current voltage"
+        echo "cur.draw AREA"
+        echo "cur.type GAUGE"
+        echo "max.label max voltage"
+        echo "max.draw LINE1"
+        echo "max.type GAUGE"
+        exit
+fi
+
+cat ./fio-status-all.txt | grep "Internal voltage" | sed -e "s/V//g" | sed -e "s/,//g"  | awk '{ print "cur.value",$4"\n""max.value",$6}'
+#/usr/bin/fio-status --all | grep "Internal temperature" | awk '{ print "cur.value",$3"\n""max.value",$6}'
+

@@ -1,0 +1,32 @@
+#!/bin/sh
+#
+# Plugin to monitor ioDrive iodrive Input/Output counter 
+
+#%# family=auto
+#%# capabilities=autoconf
+
+if [ "$1" = "autoconf" ]; then
+        echo yes
+        exit 0
+fi
+
+if [ "$1" = "config" ] ; then
+        echo "graph_args -r --lower-limit 0 ";
+        echo "graph_title ioDrive Physical bytes Read/Write counter";
+        echo "graph_category iodrive";
+        echo "graph_info Read/Write bytes";
+        echo 'graph_vlabel bytes'
+
+        echo "read.label read"
+        echo "read.draw LINE1"
+        echo "read.type DERIVE"
+        echo "write.label write"
+        echo "write.draw LINE1"
+        echo "write.type DERIVE"
+        exit
+fi
+
+/usr/bin/fio-status --all | awk  '/Physical bytes read/ { print "read.value",$5}' | sed -e "s/,//g"
+/usr/bin/fio-status --all | awk  '/Physical bytes written/ { print "write.value",$4}' | sed -e "s/,//g"
+ 
+

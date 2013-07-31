@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# Plugin to monitor ioDrive iodrive Rated PBW 
+
+#%# family=auto
+#%# capabilities=autoconf
+
+if [ "$1" = "autoconf" ]; then
+        echo yes
+        exit 0
+fi
+
+if [ "$1" = "config" ] ; then
+        echo "graph_args -r --lower-limit 0 ";
+        echo "graph_title ioDrive Rated PBW";
+        echo "graph_category iodrive";
+        echo "graph_info Rated PBW(Peta-Bytes written)";
+        echo 'graph_vlabel %'
+
+        echo "cur.label reserves"
+        echo "cur.draw AREA"
+        echo "cur.type GAUGE"
+        exit
+fi
+
+/usr/bin/fio-status --all | awk '/Rated PBW:/ { print "cur.value",$5}' | sed -e "s/%//" 
+#cat ./fio-status-all.txt | awk '/Rated PBW:/ { print "cur.value",$5}' | sed -e "s/%//" 
+#/usr/bin/fio-status --all | awk ' /Reserve space status/ { print "cur.value",$6}' | sed -e "s/..$//";
+ 
+

@@ -1,0 +1,29 @@
+#!/bin/sh
+#
+# Plugin to monitor ioDrive response
+
+#%# family=auto
+#%# capabilities=autoconf
+
+if [ "$1" = "autoconf" ]; then
+        echo yes
+        exit 0
+fi
+
+if [ "$1" = "config" ] ; then
+        echo "graph_args -r --lower-limit 0 ";
+        echo "graph_title ioDrive internal temperature";
+        echo "graph_category iodrive";
+        echo "graph_info Internal temperature: $URL";
+        echo 'graph_vlabel celsius'
+
+        echo "cur.label current temp"
+        echo "cur.draw AREA"
+        echo "cur.type GAUGE"
+        echo "max.label max temp"
+        echo "max.draw LINE1"
+        echo "max.type GAUGE"
+        exit
+fi
+
+/usr/bin/fio-status --all | grep "Internal temperature" | awk '{ print "cur.value",$3"\n""max.value",$6}'
